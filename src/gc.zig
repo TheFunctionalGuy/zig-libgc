@@ -164,6 +164,11 @@ test "GcAllocator" {
 }
 
 test "heap size" {
+    // When not initialized the test will crash
+    if (gc.GC_is_init_called() == 0) {
+        gc.GC_init();
+    }
+
     // No garbage so should be 0
     try testing.expect(collectLittle() == 0);
 
