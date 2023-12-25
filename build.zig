@@ -27,9 +27,12 @@ pub fn build(b: *std.Build) void {
             gc.linkFramework("Foundation");
         }
 
-        gc.addIncludePath("vendor/bdwgc/include");
+        gc.addIncludePath(.{ .path = "vendor/bdwgc/include" });
         inline for (libgc_srcs) |src| {
-            gc.addCSourceFile("vendor/bdwgc/" ++ src, &cflags);
+            gc.addCSourceFile(.{
+                .file = .{ .path = "vendor/bdwgc/" ++ src },
+                .flags = &cflags,
+            });
         }
 
         const gc_step = b.step("libgc", "build libgc");
@@ -50,7 +53,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
         });
         main_tests.linkLibC();
-        main_tests.addIncludePath("vendor/bdwgc/include");
+        main_tests.addIncludePath(.{ .path = "vendor/bdwgc/include" });
         main_tests.linkLibrary(gc);
 
         const test_step = b.step("test", "Run library tests");
@@ -73,7 +76,7 @@ pub fn build(b: *std.Build) void {
     });
     {
         exe.linkLibC();
-        exe.addIncludePath("vendor/bdwgc/include");
+        exe.addIncludePath(.{ .path = "vendor/bdwgc/include" });
         exe.linkLibrary(gc);
         exe.addModule("gc", module);
         b.installArtifact(exe);
